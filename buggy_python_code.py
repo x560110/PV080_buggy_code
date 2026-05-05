@@ -42,10 +42,17 @@ def fetch_website(urllib_version, url):
     if not parsed.hostname or parsed.hostname not in ALLOWED_HOSTS:
         raise ValueError("Host is not allowlisted")
 
+    # Rebuild a canonical URL from validated components only
+    safe_scheme = parsed.scheme
+    safe_host = parsed.hostname
+    safe_path = parsed.path if parsed.path else "/"
+    safe_query = f"?{parsed.query}" if parsed.query else ""
+    safe_url = f"{safe_scheme}://{safe_host}{safe_path}{safe_query}"
+
     # Fetch and print the requested URL
     try: 
         http = urllib.PoolManager()
-        r = http.request('GET', url)
+        r = http.request('GET', safe_url)
     except:
         print('Exception')
 
